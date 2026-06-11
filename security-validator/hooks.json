@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "description": "Detect prompt injection and accidentally pasted secrets before the prompt reaches the agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ./prompt_guard.py --agent codex --mode prompt",
+            "statusMessage": "Checking prompt for injection and secrets..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "description": "Block dangerous shell commands before execution",
+        "matcher": "shell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ./command_validator.py --agent codex",
+            "statusMessage": "Validating shell command..."
+          }
+        ]
+      },
+      {
+        "description": "Protect sensitive local files and credential paths",
+        "matcher": "file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ./sensitive_path_guard.py --agent codex",
+            "statusMessage": "Checking file path safety..."
+          }
+        ]
+      }
+    ]
+  }
+}
+
